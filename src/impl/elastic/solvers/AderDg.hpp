@@ -36,7 +36,7 @@
 #include "io/Receivers.h"
 #include "InternalBoundary.hpp"
 #include "FrictionLaws.hpp"
-
+#include "crop.hpp"
 #if defined(PP_T_KERNELS_XSMM) || defined(PP_T_KERNELS_XSMM_DENSE_SINGLE)
 #include <libxsmm.h>
 #endif
@@ -102,11 +102,12 @@ class edge::elastic::solvers::AderDg {
           for( int_md l_n = 0; l_n < N_ELEMENT_MODES; l_n++ ) {
             for( int_cfr l_cfr = 0; l_cfr < N_CRUNS; l_cfr++ ) {
               o_c[l_m][l_n][l_cfr] += i_a[l_m][l_k][l_cfr] * i_b[l_k][l_n];
+              crop(&o_c[l_m][l_n][l_cfr]);
             }
           }
         }
       }
-    }
+      }
 
     /**
      * Performs the operation C += A.B with private per-run data in C and B.
@@ -129,11 +130,15 @@ class edge::elastic::solvers::AderDg {
           for( int_md l_n = 0; l_n < N_ELEMENT_MODES; l_n++ ) {
             for( int_cfr l_cfr = 0; l_cfr < N_CRUNS; l_cfr++ ) {
               o_c[l_m][l_n][l_cfr] += i_a[l_m][l_k] * i_b[l_k][l_n][l_cfr];
+              crop(&o_c[l_m][l_n][l_cfr]);
             }
           }
         }
       }
+      
+
     }
+
 
   public:
     /**
@@ -452,17 +457,17 @@ class edge::elastic::solvers::AderDg {
                        double                           i_dT,
                        TL_T_INT_LID                     i_firstSpRp,
                        TL_T_INT_LID                     i_firstSpRe,
-                       TL_T_INT_LID            const (* i_elFa)[ C_ENT[T_SDISC.ELEMENT].N_FACES ],
-                       t_faceChars             const  * i_faChars,
-                       t_elementChars          const  * i_elChars,
-                       t_dg                    const  & i_dg,
-                       t_matStar               const (* i_starM)[N_DIM],
-                       t_fluxSolver            const (* i_fluxSolvers)[ C_ENT[T_SDISC.ELEMENT].N_FACES ],
+                       TL_T_INT_LID            (* i_elFa)[ C_ENT[T_SDISC.ELEMENT].N_FACES ],
+                       t_faceChars               * i_faChars,
+                       t_elementChars            * i_elChars,
+                       t_dg                      & i_dg,
+                       t_matStar                (* i_starM)[N_DIM],
+                       t_fluxSolver             (* i_fluxSolvers)[ C_ENT[T_SDISC.ELEMENT].N_FACES ],
                        TL_T_REAL                     (* io_dofs)[N_QUANTITIES][N_ELEMENT_MODES][N_CRUNS],
                        TL_T_REAL                     (* o_tInt)[N_QUANTITIES][N_ELEMENT_MODES][N_CRUNS],
                        TL_T_REAL                     (* o_tRup)[N_QUANTITIES][N_ELEMENT_MODES][N_CRUNS],
                        edge::io::Receivers            & io_recvs,
-                       TL_T_MM const                  & i_mm ) {
+                       TL_T_MM                   & i_mm ) {
 #if __has_builtin(__builtin_assume_aligned)
       // share alignment with compiler
       (void) __builtin_assume_aligned(io_dofs, ALIGNMENT.ELEMENT_MODES.PRIVATE);

@@ -27,7 +27,7 @@
 #define EDGE_SEISMIC_TIME_PRED_HPP
 
 #include "constants.hpp"
-
+#include "crop.hpp"
 #if defined PP_T_KERNELS_VANILLA
 #include "data/MmVanilla.hpp"
 #elif defined PP_T_KERNELS_XSMM_DENSE_SINGLE
@@ -306,6 +306,7 @@ class edge::elastic::solvers::TimePred {
 #pragma omp simd
           for( int_md l_md = 0; l_md < CE_N_ELEMENT_MODES_CK( TL_T_EL, TL_O_SP, l_de ); l_md++ ) {
             o_tInt[l_qt][l_md][0] += l_scalar * o_der[l_de][l_qt][l_md][0];
+            crop(&o_tInt[l_qt][l_md][0]);
           }
         }
       }
