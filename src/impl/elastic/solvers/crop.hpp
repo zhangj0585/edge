@@ -25,10 +25,6 @@
 #define CROP_HPP
 #include <stdlib.h>
 #include <stdio.h>
-<<<<<<< HEAD
-=======
-#include <math.h>
->>>>>>> 169ed5318f58c667c3b98007ac8a88494d27b694
 typedef union {
 	double f;
 	struct
@@ -42,33 +38,9 @@ static void crop(double * input) __attribute__((unused));
 static void crop(double * input)
 {
 	int numbits = atoi(getenv("MANT"));
-<<<<<<< HEAD
 	myfloat var;
 	var.f = *input;
 	var.field.mantissa = (var.field.mantissa>>numbits)<<numbits;
 	*input = var.f;
-=======
-	int k = 0;
-	int counter = 1;
-	double sum = 0;
-	double newnum = 0;
-	long newmantissa = 0;
-	myfloat var;
-	var.f = *input;
-	newmantissa = var.field.mantissa>>numbits;
-	newmantissa = newmantissa << numbits;
-	for (int j = 51; j >= 0; j--)
-	{
-		k = newmantissa >> j;
-		if (k & 1)
-		{
-			sum += pow(2, -(counter));
-		}
-		counter++;
-	}
-	
-	newnum = pow((-1), var.field.sign) * pow(2, var.field.exponent - 1023) * (1 + sum);
-	*input = newnum;
->>>>>>> 169ed5318f58c667c3b98007ac8a88494d27b694
 }
 #endif
