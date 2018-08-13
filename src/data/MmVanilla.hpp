@@ -29,7 +29,7 @@
 #include "io/logging.h"
 
 #include "linalg/Matrix.h"
-
+#include "crop.h"
 namespace edge {
   namespace data {
     template< typename TL_T_REAL >
@@ -124,19 +124,23 @@ class edge::data::MmVanilla {
           void operator()( TL_T_REAL const * i_a,
                            TL_T_REAL const * i_b,
                            TL_T_REAL       * io_c ) const {
-            if( m_fusedAC ) {
+
+	   
+	 if( m_fusedAC ) {
               linalg::Matrix::matMulFusedAC( m_nCrs,
                                              m_m,   m_n,   m_k,
                                              m_ldA, m_ldB, m_ldC,
                                              m_beta,
                                              i_a,   i_b,   io_c );
-            }
+
+            
             else if( m_fusedBC ) {
               linalg::Matrix::matMulFusedBC( m_nCrs,
                                              m_m,   m_n,   m_k,
                                              m_ldA, m_ldB, m_ldC,
                                              m_beta,
-                                             i_a,   i_b,   io_c );
+                                      	     i_a,   i_b,   io_c );	
+
             }
             else EDGE_LOG_FATAL << "matrix structure not supported";
           };
