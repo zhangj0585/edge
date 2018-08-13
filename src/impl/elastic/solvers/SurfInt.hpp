@@ -233,26 +233,31 @@ class edge::elastic::solvers::SurfInt {
                               TL_T_REAL                       const   i_dofsP[TL_N_QTS][TL_N_MDS_EL][TL_N_CRS],
                               TL_T_REAL                       const   i_tDofsP[TL_N_QTS][TL_N_MDS_EL][TL_N_CRS] ) {
       // iterate over faces
-      crop(io_dofs[0][0]);
+      
       for( unsigned short l_fa = 0; l_fa < TL_N_FAS; l_fa++ ) {
+        crop(io_dofs[0][0]);
+        crop(i_tDofs[0][0]);
         i_mm.m_kernels[((TL_O_TI-1)*2)+2]( i_fIntL[l_fa][0],
                                            i_tDofs[0][0],
                                            o_scratch[0][0][0],
                                            nullptr,
                                            i_dofsP[0][0],
                                            nullptr );
+        crop(i_fSol[l_fa][0]);
         i_mm.m_kernels[((TL_O_TI-1)*2)+3]( o_scratch[0][0][0],
                                            i_fSol[l_fa][0],
                                            o_scratch[1][0][0] );
-    
+       
+       
         i_mm.m_kernels[((TL_O_TI-1)*2)+4]( i_fIntT[l_fa][0],
                                            o_scratch[1][0][0],
                                            io_dofs[0][0],
                                            nullptr,
                                            i_tDofsP[0][0],
                                            nullptr );
+        crop(io_dofs[0][0]);
   
-      }crop(io_dofs[0][0]);
+      }
     }
 #endif
 
@@ -380,6 +385,7 @@ class edge::elastic::solvers::SurfInt {
                               unsigned short                          i_fId = std::numeric_limits< unsigned short >::max() ) {
       // multiply with first face integration matrix
       crop(io_dofs[0][0]);
+      crop(i_tDofs[0][0]);
       i_mm.m_kernels[((TL_O_TI-1)*2)+2]( i_fIntLN[0],
                                          i_tDofs[0][0],
                                          o_scratch[0][0][0],
@@ -388,6 +394,7 @@ class edge::elastic::solvers::SurfInt {
                                          nullptr );
 
       // multiply with flux solver
+      crop(i_fSol[0]);
       i_mm.m_kernels[((TL_O_TI-1)*2)+3]( o_scratch[0][0][0],
                                          i_fSol[0],
                                          o_scratch[1][0][0] );

@@ -117,7 +117,8 @@ class edge::elastic::solvers::VolInt {
       crop(i_tDofs[0][0]);
       for( unsigned short l_di = 0; l_di < TL_N_DIS; l_di++ ) {
         // multiply with stiffness and inverse mass matrix
-        
+        crop(io_dofs[0][0]);
+        crop(i_tDofs[0][0]);
         i_mm.m_kernels[((TL_O_SP-1)*2)]( (i_stiff[l_di][0]),
                                          i_tDofs[0][0],
                                          o_scratch[0][0] );
@@ -125,8 +126,8 @@ class edge::elastic::solvers::VolInt {
         i_mm.m_kernels[((TL_O_SP-1)*2)+1]( o_scratch[0][0],
                                            (i_jac[l_di][0]),
                                            io_dofs[0][0] );
+        crop(io_dofs[0][0]);
       }
-      crop(i_tDofs[0][0]);
     }
 #endif
 
